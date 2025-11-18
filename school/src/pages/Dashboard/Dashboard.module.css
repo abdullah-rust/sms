@@ -1,0 +1,153 @@
+.dashboard {
+  padding: 2.5rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  min-height: 100vh;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #333, #667eea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 3rem;
+  text-align: center;
+  letter-spacing: -0.5px;
+  position: relative;
+}
+
+.title::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 2px;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Animation for cards */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cardsGrid > * {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.cardsGrid > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.cardsGrid > *:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.cardsGrid > *:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* Stats Overview Section */
+.statsOverview {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-top: 3rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+.statsTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1.5rem 1rem;
+  }
+
+  .title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .cardsGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .statsOverview {
+    padding: 1.5rem;
+    margin-top: 2rem;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .statsOverview {
+    background: #2d2d2d;
+    border-color: #404040;
+  }
+
+  .statsTitle {
+    color: #ffffff;
+  }
+}
+
+.analyticsSection {
+  margin-top: 3rem;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, #333, #667eea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .fullWidth {
+    grid-column: 1;
+  }
+}

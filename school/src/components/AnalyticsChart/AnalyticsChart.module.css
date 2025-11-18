@@ -1,0 +1,37 @@
+.chartContainer {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+}
+
+.chartContainer:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.chartTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  background: linear-gradient(135deg, #333, #667eea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .chartContainer {
+    background: #2d2d2d;
+    border-color: #404040;
+  }
+
+  .chartTitle {
+    color: #ffffff;
+  }
+}

@@ -1,0 +1,240 @@
+.popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.popup {
+  background: white;
+  border-radius: 20px;
+  padding: 0;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  animation: popupSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+}
+
+@keyframes popupSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Different types styling */
+.popup.error {
+  border-top: 4px solid #dc3545;
+}
+
+.popup.success {
+  border-top: 4px solid #28a745;
+}
+
+.popup.warning {
+  border-top: 4px solid #ffc107;
+}
+
+.popup.info {
+  border-top: 4px solid #17a2b8;
+}
+
+.popupHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #f8f9fa, #ffffff);
+  border-bottom: 1px solid #e9ecef;
+}
+
+.popup.error .popupHeader {
+  background: linear-gradient(135deg, #f8d7da, #ffffff);
+}
+
+.popup.success .popupHeader {
+  background: linear-gradient(135deg, #d4edda, #ffffff);
+}
+
+.popup.warning .popupHeader {
+  background: linear-gradient(135deg, #fff3cd, #ffffff);
+}
+
+.popup.info .popupHeader {
+  background: linear-gradient(135deg, #d1ecf1, #ffffff);
+}
+
+.icon {
+  font-size: 2rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  animation: iconBounce 0.6s ease-out;
+}
+
+@keyframes iconBounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+  flex: 1;
+}
+
+.popup.error .title {
+  color: #dc3545;
+}
+
+.popup.success .title {
+  color: #28a745;
+}
+
+.popup.warning .title {
+  color: #856404;
+}
+
+.popup.info .title {
+  color: #0c5460;
+}
+
+.closeButton {
+  background: rgba(0, 0, 0, 0.1);
+  border: none;
+  color: #6c757d;
+  font-size: 1.5rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.closeButton:hover {
+  background: rgba(0, 0, 0, 0.2);
+  transform: rotate(90deg);
+}
+
+.popupBody {
+  padding: 2rem;
+}
+
+.message {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #333;
+  margin: 0;
+  text-align: center;
+}
+
+.popupFooter {
+  padding: 0 2rem 2rem 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.okButton {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 0.8rem 2.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  font-size: 1rem;
+}
+
+.okButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(102, 126, 234, 0.4);
+}
+
+.okButton:active {
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .popup {
+    width: 95%;
+    margin: 1rem;
+  }
+
+  .popupHeader {
+    padding: 1.2rem 1.5rem;
+  }
+
+  .popupBody {
+    padding: 1.5rem;
+  }
+
+  .popupFooter {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .popup {
+    background: #2d2d2d;
+    border-color: #404040;
+  }
+
+  .popupHeader {
+    background: linear-gradient(135deg, #3d3d3d, #2d2d2d);
+    border-color: #404040;
+  }
+
+  .message {
+    color: #ffffff;
+  }
+
+  .closeButton {
+    background: rgba(255, 255, 255, 0.1);
+    color: #cccccc;
+  }
+
+  .closeButton:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}

@@ -1,0 +1,152 @@
+.card {
+  background: linear-gradient(145deg, #ffffff, #f8f9fa);
+  border-radius: 16px;
+  padding: 1.8rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.card:hover::before {
+  transform: scaleX(1);
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12), 0 5px 15px rgba(0, 0, 0, 0.08);
+  border-color: rgba(102, 126, 234, 0.2);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+}
+
+.iconContainer {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  padding: 1rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+}
+
+.card:hover .iconContainer {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 6px 18px rgba(102, 126, 234, 0.4);
+}
+
+.icon {
+  font-size: 1.8rem;
+  color: white;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.cardContent {
+  flex: 1;
+}
+
+.title {
+  font-size: 0.95rem;
+  color: #6c757d;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #333, #667eea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  color: #8a8a8a;
+  margin-bottom: 0.8rem;
+  font-weight: 500;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 25px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.card:hover .badge {
+  transform: translateY(-2px);
+}
+
+.badge.success {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+}
+
+.badge.warning {
+  background: linear-gradient(135deg, #ffc107, #fd7e14);
+  color: white;
+}
+
+.badge.danger {
+  background: linear-gradient(135deg, #dc3545, #e83e8c);
+  color: white;
+}
+
+.badge.info {
+  background: linear-gradient(135deg, #17a2b8, #6f42c1);
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card {
+    padding: 1.5rem;
+    margin: 0 0.5rem;
+  }
+
+  .value {
+    font-size: 2rem;
+  }
+
+  .cardHeader {
+    gap: 1rem;
+  }
+
+  .iconContainer {
+    padding: 0.8rem;
+  }
+
+  .icon {
+    font-size: 1.5rem;
+  }
+}
