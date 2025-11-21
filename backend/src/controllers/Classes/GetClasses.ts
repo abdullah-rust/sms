@@ -14,8 +14,8 @@ export default async function GetClasses(_req: Request, res: Response) {
           json_agg(t.name) FILTER (WHERE t.employee_id IS NOT NULL), '[]'
         ) AS teachers
       FROM classes c
-      LEFT JOIN teachers t 
-        ON c.id = t.class_id
+      LEFT JOIN teacher_classes tc ON c.id = tc.class_id
+      LEFT JOIN teachers t ON tc.teacher_id = t.employee_id
       GROUP BY c.id
       ORDER BY c.id ASC;
     `);

@@ -1,6 +1,5 @@
 import {
   FaUsers,
-  FaEdit,
   FaTrash,
   // FaChalkboardTeacher,
   FaUserGraduate,
@@ -14,7 +13,7 @@ interface ClassCardProps {
   onDelete: (id: number) => void;
 }
 
-const ClassCard = ({ classItem, onEdit, onDelete }: ClassCardProps) => {
+const ClassCard = ({ classItem, onDelete }: ClassCardProps) => {
   return (
     <div className={styles.card}>
       {/* Card Header */}
@@ -59,13 +58,6 @@ const ClassCard = ({ classItem, onEdit, onDelete }: ClassCardProps) => {
       </div>
       {/* Card Actions */}
       <div className={styles.cardActions}>
-        <button
-          className={styles.editButton}
-          onClick={() => onEdit(classItem.class_id)}
-        >
-          <FaEdit className={styles.actionIcon} />
-          Edit
-        </button>
         <button
           className={styles.deleteButton}
           onClick={() => onDelete(classItem.class_id)}

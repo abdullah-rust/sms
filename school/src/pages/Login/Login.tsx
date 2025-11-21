@@ -4,12 +4,14 @@ import { api } from "../../utils/api";
 import { loginAtom } from "../../utils/atom";
 import { useSetAtom } from "jotai";
 import { FaSpinner } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const setLogInAtom = useSetAtom(loginAtom);
+  const navigate = useNavigate();
 
   async function handlSubmit(e: any) {
     e.preventDefault();
@@ -21,6 +23,7 @@ const Login = () => {
         password,
       });
       setLogInAtom(true);
+      navigate("/");
     } catch (e: any) {
       console.log(e);
     } finally {

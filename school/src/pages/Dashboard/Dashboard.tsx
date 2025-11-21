@@ -4,8 +4,18 @@ import AnalyticsChart from "../../components/AnalyticsChart/AnalyticsChart";
 import CustomBarChart from "../../components/BarChart/BarChart";
 import CustomPieChart from "../../components/PieChart/PieChart";
 import styles from "./Dashboard.module.css";
+import {
+  TeachersDataAtom,
+  StudentsDataAtom,
+  ClaasesDataAtom,
+} from "../../utils/atom";
+import { useAtomValue } from "jotai";
 
 const Dashboard = () => {
+  const TeachersCount = useAtomValue(TeachersDataAtom);
+  const StudentsCount = useAtomValue(StudentsDataAtom);
+  const ClassesCount = useAtomValue(ClaasesDataAtom);
+
   // Sample data for charts
   const studentData = [
     { name: "Jan", students: 1000, teachers: 40 },
@@ -41,22 +51,19 @@ const Dashboard = () => {
         <Card
           icon={FaUserGraduate}
           title="Total Students"
-          value="1,250"
-          badge="+5.2% from last month"
+          value={StudentsCount?.length || 0}
           badgeType="success"
         />
         <Card
           icon={FaChalkboardTeacher}
           title="Total Teachers"
-          value="48"
-          badge="+2 new teachers"
+          value={TeachersCount?.length || 0}
           badgeType="info"
         />
         <Card
           icon={FaUsers}
           title="Total Classes"
-          value="24"
-          subtitle="12 sections each"
+          value={ClassesCount?.length || 0}
           badge="All active"
           badgeType="success"
         />

@@ -2,26 +2,28 @@ import { useState } from "react";
 import { FaPlus, FaSearch } from "react-icons/fa";
 import TeacherCard from "../../components/TeacherCard/TeacherCard";
 import SearchBar from "../../components/SearchBar/SearchBar";
-import { mockTeachers } from "./mockData";
 import styles from "./Teachers.module.css";
-import { addteacherAtom } from "../../utils/atom";
-import { useSetAtom } from "jotai";
+import { addteacherAtom, TeachersDataAtom } from "../../utils/atom";
+import { useAtom, useSetAtom } from "jotai";
 
 const Teachers = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [teachers, setTeachers] = useState(mockTeachers);
+  const [teachers, setTeachers] = useAtom(TeachersDataAtom || []);
   const setaddteacher = useSetAtom(addteacherAtom);
-
-  const filteredTeachers = teachers.filter(
+  const filteredTeachers = teachers?.filter(
     (teacher) =>
-      teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      teacher.teacher_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       teacher.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      teacher.className?.toLowerCase().includes(searchTerm.toLowerCase())
+      teacher.classes.some((cls) =>
+        `${cls.class_name} ${cls.section}`
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+      )
   );
 
   const handleDelete = (employee_id: number) => {
     setTeachers(
-      teachers.filter((teacher) => teacher.employee_id !== employee_id)
+      teachers?.filter((teacher) => teacher.employee_id !== employee_id)
     );
   };
 
@@ -44,22 +46,27 @@ const Teachers = () => {
       </div>
 
       {/* Search Bar */}
-      <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+      <SearchBar
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        placHolder="Search by teachers name"
+      />
 
       {/* Teachers Grid */}
       <div className={styles.teachersGrid}>
-        {filteredTeachers.map((teacher) => (
-          <TeacherCard
-            key={teacher.employee_id}
-            teacher={teacher}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        ))}
+        {filteredTeachers &&
+          filteredTeachers.map((teacher) => (
+            <TeacherCard
+              key={teacher.employee_id}
+              teacher={teacher}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ))}
       </div>
 
       {/* Empty State */}
-      {filteredTeachers.length === 0 && (
+      {filteredTeachers && filteredTeachers.length === 0 && (
         <div className={styles.emptyState}>
           <FaSearch className={styles.emptyIcon} />
           <h3>No teachers found</h3>

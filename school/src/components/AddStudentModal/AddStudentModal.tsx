@@ -1,14 +1,44 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import styles from "./AddStudentModal.module.css";
-import { addstudentAtom } from "../../utils/atom";
-import { useSetAtom } from "jotai";
+import {
+  addstudentAtom,
+  ClaasesDataAtom,
+  StudentsDataAtom,
+} from "../../utils/atom";
+import { useAtomValue, useSetAtom } from "jotai";
+import { api } from "../../utils/api";
+import { FaSpinner } from "react-icons/fa";
 
 const AddStudentModal = () => {
   const [name, setName] = useState("");
-  const [selectedClass, setSelectedClass] = useState("");
+  const [Class, setSelectedClass] = useState("");
   const [number, setNumber] = useState("");
   const [dob, setDob] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const setAddStudentAtom = useSetAtom(addstudentAtom);
+  const classData = useAtomValue(ClaasesDataAtom);
+  const setStudentData = useSetAtom(StudentsDataAtom);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const res = await api.post("/add-student", {
+        name,
+        class_id: parseInt(Class),
+        contact: number,
+        dob,
+      });
+      console.log(res.data.data);
+      setStudentData((prev) => [...(prev || []), res.data.data]);
+      setAddStudentAtom(false);
+    } catch (e: any) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <div className={styles.modalOverlay}>
@@ -22,13 +52,14 @@ const AddStudentModal = () => {
           <button
             className={styles.closeButton}
             onClick={() => setAddStudentAtom(false)}
+            disabled={isLoading}
           >
             ×
           </button>
         </div>
 
         {/* Modal Body */}
-        <form className={styles.form}>
+        <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label className={styles.label}>Full Name</label>
             <input
@@ -36,6 +67,8 @@ const AddStudentModal = () => {
               className={styles.input}
               placeholder="Enter student's full name"
               onChange={(e) => setName(e.target.value)}
+              disabled={isLoading}
+              required
             />
           </div>
 
@@ -43,11 +76,18 @@ const AddStudentModal = () => {
             <label className={styles.label}>Class</label>
             <select
               className={styles.select}
-              value={selectedClass}
+              value={Class}
               onChange={(e) => setSelectedClass(e.target.value)}
+              disabled={isLoading}
+              required
             >
-              <option value="1">Grade 1</option>
-              <option value="2">Grade 2</option>
+              <option value="">Select Class</option>
+              {classData &&
+                classData.map((c) => (
+                  <option value={c.class_id} key={c.class_id}>
+                    {c.class_name + "-" + c.section}
+                  </option>
+                ))}
             </select>
           </div>
 
@@ -58,6 +98,8 @@ const AddStudentModal = () => {
               className={styles.input}
               placeholder="+92 300 1234567"
               onChange={(e) => setNumber(e.target.value)}
+              disabled={isLoading}
+              required
             />
           </div>
 
@@ -68,6 +110,8 @@ const AddStudentModal = () => {
               value={dob}
               className={styles.input}
               onChange={(e) => setDob(e.target.value)}
+              disabled={isLoading}
+              required
             />
           </div>
 
@@ -77,11 +121,25 @@ const AddStudentModal = () => {
               type="button"
               className={styles.cancelButton}
               onClick={() => setAddStudentAtom(false)}
+              disabled={isLoading}
             >
               Cancel
             </button>
-            <button type="submit" className={styles.submitButton}>
-              Add Student
+            <button
+              type="submit"
+              className={`${styles.submitButton} ${
+                isLoading ? styles.loading : ""
+              }`}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <FaSpinner className={styles.spinner} />
+                  Adding...
+                </>
+              ) : (
+                "Add Student"
+              )}
             </button>
           </div>
         </form>

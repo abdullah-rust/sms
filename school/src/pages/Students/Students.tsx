@@ -2,26 +2,26 @@ import { useState } from "react";
 import { FaPlus, FaSearch } from "react-icons/fa";
 import StudentCard from "../../components/StudentCard/StudentCard";
 import SearchBar from "../../components/SearchBar/SearchBar";
-import { mockStudents } from "./mockData";
 import styles from "./Students.module.css";
 import { addstudentAtom } from "../../utils/atom";
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
+import { StudentsDataAtom } from "../../utils/atom";
 
 const Students = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [students, setStudents] = useState(mockStudents);
+  const [students, setStudents] = useAtom(StudentsDataAtom || []);
   const setAddstudent = useSetAtom(addstudentAtom);
 
-  const filteredStudents = students.filter(
+  const filteredStudents = students?.filter(
     (student) =>
       student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.className?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.classname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.roll_number.toString().includes(searchTerm)
   );
 
   const handleDelete = (roll_number: number) => {
     setStudents(
-      students.filter((student) => student.roll_number !== roll_number)
+      students?.filter((student) => student.roll_number !== roll_number)
     );
   };
 
@@ -45,22 +45,27 @@ const Students = () => {
       </div>
 
       {/* Search Bar */}
-      <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+      <SearchBar
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        placHolder="Search by student id.."
+      />
 
       {/* Students Grid */}
       <div className={styles.studentsGrid}>
-        {filteredStudents.map((student) => (
-          <StudentCard
-            key={student.roll_number}
-            student={student}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        ))}
+        {filteredStudents &&
+          filteredStudents.map((student) => (
+            <StudentCard
+              key={student.roll_number}
+              student={student}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ))}
       </div>
 
       {/* Empty State */}
-      {filteredStudents.length === 0 && (
+      {filteredStudents && filteredStudents.length === 0 && (
         <div className={styles.emptyState}>
           <FaSearch className={styles.emptyIcon} />
           <h3>No students found</h3>

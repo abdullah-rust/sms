@@ -7,15 +7,9 @@ import {
   FaUsers,
 } from "react-icons/fa";
 import styles from "./TeacherCard.module.css";
-
-interface Teacher {
-  employee_id: number;
-  name: string;
-  subject: string;
-  contact: string;
-  class_id: number;
-  className?: string;
-}
+import type { Teacher } from "../../utils/types";
+import { teacherEditAtom, TeacherEditData } from "../../utils/atom";
+import { useSetAtom } from "jotai";
 
 interface TeacherCardProps {
   teacher: Teacher;
@@ -23,7 +17,10 @@ interface TeacherCardProps {
   onDelete: (employee_id: number) => void;
 }
 
-const TeacherCard = ({ teacher, onEdit, onDelete }: TeacherCardProps) => {
+const TeacherCard = ({ teacher, onDelete }: TeacherCardProps) => {
+  const setEditTEacher = useSetAtom(teacherEditAtom);
+  const setEditTeacherData = useSetAtom(TeacherEditData);
+
   return (
     <div className={styles.card}>
       {/* Card Header */}
@@ -32,7 +29,7 @@ const TeacherCard = ({ teacher, onEdit, onDelete }: TeacherCardProps) => {
           <FaChalkboardTeacher className={styles.avatarIcon} />
         </div>
         <div className={styles.teacherInfo}>
-          <h3 className={styles.name}>{teacher.name}</h3>
+          <h3 className={styles.name}>{teacher.teacher_name}</h3>
           <div className={styles.idSection}>
             <span className={styles.employeeId}>
               EMP ID: {teacher.employee_id}
@@ -55,7 +52,11 @@ const TeacherCard = ({ teacher, onEdit, onDelete }: TeacherCardProps) => {
         <div className={styles.detailItem}>
           <FaUsers className={styles.detailIcon} />
           <span className={styles.detailText}>
-            {teacher.className || `Class ${teacher.class_id}`}
+            {teacher.classes.length > 0
+              ? teacher.classes
+                  .map((c) => `${c.class_name} ${c.section}`)
+                  .join(", ")
+              : "No Class Assigned"}
           </span>
         </div>
       </div>
@@ -64,7 +65,10 @@ const TeacherCard = ({ teacher, onEdit, onDelete }: TeacherCardProps) => {
       <div className={styles.cardActions}>
         <button
           className={styles.editButton}
-          onClick={() => onEdit(teacher.employee_id)}
+          onClick={() => {
+            setEditTeacherData(teacher);
+            setEditTEacher(true);
+          }}
         >
           <FaEdit className={styles.actionIcon} />
           Edit

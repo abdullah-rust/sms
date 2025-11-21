@@ -1,5 +1,5 @@
 import styles from "./AddClassModal.module.css";
-import { addclassAtom } from "../../utils/atom";
+import { addclassAtom, ClaasesDataAtom } from "../../utils/atom";
 import { useSetAtom } from "jotai";
 import type React from "react";
 import { api } from "../../utils/api";
@@ -8,6 +8,7 @@ import { FaSpinner } from "react-icons/fa";
 
 const AddClassModal = () => {
   const setaddclass = useSetAtom(addclassAtom);
+  const setClassData = useSetAtom(ClaasesDataAtom);
   const [class_name, setClassName] = useState("");
   const [section, setSection] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +23,7 @@ const AddClassModal = () => {
         section,
       });
       console.log(res.data.data);
+      setClassData((prev) => [...(prev || []), res.data.data]);
       setaddclass(false); // Success hone pe modal close karo
     } catch (e: any) {
       console.log(e);

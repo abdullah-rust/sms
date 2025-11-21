@@ -1,7 +1,7 @@
 CREATE DATABASE schooldb; 
 
 
-CREATE TABLE admins (
+CREATE TABLE admin (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     password TEXT NOT NULL,  
@@ -33,9 +33,15 @@ CREATE TABLE teachers (
     name VARCHAR(100) NOT NULL,
     subject VARCHAR(100) NOT NULL,
     contact VARCHAR(50) UNIQUE,
-    class_id INT REFERENCES classes(id),
     created_at TIMESTAMP DEFAULT NOW()
 );
+
+CREATE TABLE teacher_classes (
+  teacher_id INT REFERENCES teachers(employee_id),
+  class_id INT REFERENCES classes(id),
+  PRIMARY KEY (teacher_id, class_id)
+);
+
 
 
 CREATE TABLE attendance (
@@ -49,7 +55,7 @@ CREATE TABLE attendance (
 
 CREATE TABLE grades (
     id SERIAL PRIMARY KEY,
-    student_id INT REFERENCES students(id),
+    student_id INT REFERENCES students(id), 
     subject VARCHAR(100) NOT NULL,
     exam_name VARCHAR(100) NOT NULL,
     marks INT NOT NULL,

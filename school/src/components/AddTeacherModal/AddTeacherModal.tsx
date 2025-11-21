@@ -1,5 +1,9 @@
 import styles from "./AddTeacherModal.module.css";
-import { addteacherAtom, ClaasesDataAtom } from "../../utils/atom";
+import {
+  addteacherAtom,
+  ClaasesDataAtom,
+  TeachersDataAtom,
+} from "../../utils/atom";
 import { useAtomValue, useSetAtom } from "jotai";
 import React, { useState } from "react";
 import { api } from "../../utils/api";
@@ -11,6 +15,7 @@ const AddTeacherModal = () => {
   const [subject, setSubject] = useState("");
   const [contact, setContact] = useState("");
   const [class_id, setClass_id] = useState("");
+  const setteachersData = useSetAtom(TeachersDataAtom);
 
   async function handleSubmit(e: React.FormEvent<HTMLElement>) {
     e.preventDefault();
@@ -23,6 +28,8 @@ const AddTeacherModal = () => {
         class_id,
       });
       console.log(res.data.data);
+      setteachersData((prev) => [...(prev || []), res.data.data]);
+      setaddteacher(false);
     } catch (e: any) {
       console.log(e);
     }
@@ -96,10 +103,11 @@ const AddTeacherModal = () => {
               className={styles.select}
               onChange={(e) => setClass_id(e.target.value)}
             >
+              <option value="">Select Class</option>
               {classData &&
                 classData.map((c) => (
                   <option value={c.class_id} key={c.class_id}>
-                    {c.class_name}
+                    {c.class_name + "-" + c.section}
                   </option>
                 ))}
             </select>

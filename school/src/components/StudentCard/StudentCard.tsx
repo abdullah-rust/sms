@@ -6,15 +6,9 @@ import {
   FaCalendarAlt,
 } from "react-icons/fa";
 import styles from "./StudentCard.module.css";
-
-interface Student {
-  roll_number: number;
-  name: string;
-  class_id: number;
-  contact: string;
-  dob: string; // Date as string
-  className?: string; // Optional: class name for display
-}
+import type { Student } from "../../utils/types";
+import { studentEditAtom, StudentEditData } from "../../utils/atom";
+import { useSetAtom } from "jotai";
 
 interface StudentCardProps {
   student: Student;
@@ -22,7 +16,7 @@ interface StudentCardProps {
   onDelete: (roll_number: number) => void;
 }
 
-const StudentCard = ({ student, onEdit, onDelete }: StudentCardProps) => {
+const StudentCard = ({ student, onDelete }: StudentCardProps) => {
   // Calculate age from date of birth
   const calculateAge = (dob: string) => {
     const birthDate = new Date(dob);
@@ -38,6 +32,9 @@ const StudentCard = ({ student, onEdit, onDelete }: StudentCardProps) => {
     }
     return age;
   };
+
+  const setStudentAtom = useSetAtom(studentEditAtom);
+  const setStudentEditData = useSetAtom(StudentEditData);
 
   // Format date for display
   const formatDate = (dateString: string) => {
@@ -64,7 +61,7 @@ const StudentCard = ({ student, onEdit, onDelete }: StudentCardProps) => {
               Roll No: {student.roll_number}
             </span>
             <span className={styles.classBadge}>
-              {student.className || `Class ${student.class_id}`}
+              {student.classname || `Class ${student.classname}`}
             </span>
           </div>
         </div>
@@ -83,7 +80,7 @@ const StudentCard = ({ student, onEdit, onDelete }: StudentCardProps) => {
         <div className={styles.infoBadges}>
           <div className={styles.ageBadge}>Age: {age}</div>
           <div className={styles.classIdBadge}>
-            Class ID: {student.class_id}
+            Class Name: {student.classname}
           </div>
         </div>
       </div>
@@ -92,7 +89,10 @@ const StudentCard = ({ student, onEdit, onDelete }: StudentCardProps) => {
       <div className={styles.cardActions}>
         <button
           className={styles.editButton}
-          onClick={() => onEdit(student.roll_number)}
+          onClick={() => {
+            setStudentAtom(true);
+            setStudentEditData(student);
+          }}
         >
           <FaEdit className={styles.actionIcon} />
           Edit
