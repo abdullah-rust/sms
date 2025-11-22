@@ -36,7 +36,6 @@ export default async function AddClass(
     );
     const newClass = result.rows[0];
 
-    // Fetch teachers for this new class (jo abhi likely empty array hoga)
     const teachersResult = await pool.query(
       `
       SELECT t.name

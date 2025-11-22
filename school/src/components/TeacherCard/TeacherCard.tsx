@@ -13,7 +13,6 @@ import { useSetAtom } from "jotai";
 
 interface TeacherCardProps {
   teacher: Teacher;
-  onEdit: (employee_id: number) => void;
   onDelete: (employee_id: number) => void;
 }
 

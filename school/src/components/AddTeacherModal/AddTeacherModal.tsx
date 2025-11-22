@@ -7,6 +7,7 @@ import {
 import { useAtomValue, useSetAtom } from "jotai";
 import React, { useState } from "react";
 import { api } from "../../utils/api";
+import { errorPopupAtom, errorPopupVisible } from "../../utils/atom";
 
 const AddTeacherModal = () => {
   const setaddteacher = useSetAtom(addteacherAtom);
@@ -16,6 +17,8 @@ const AddTeacherModal = () => {
   const [contact, setContact] = useState("");
   const [class_id, setClass_id] = useState("");
   const setteachersData = useSetAtom(TeachersDataAtom);
+  const seterrorPopupAtom = useSetAtom(errorPopupAtom);
+  const seterrorPopupVisible = useSetAtom(errorPopupVisible);
 
   async function handleSubmit(e: React.FormEvent<HTMLElement>) {
     e.preventDefault();
@@ -27,11 +30,22 @@ const AddTeacherModal = () => {
         contact: parseInt(contact),
         class_id,
       });
-      console.log(res.data.data);
+
       setteachersData((prev) => [...(prev || []), res.data.data]);
+
+      seterrorPopupAtom({
+        type: "success",
+        message: res.data.message || "created",
+      });
+      seterrorPopupVisible(true);
       setaddteacher(false);
     } catch (e: any) {
       console.log(e);
+      seterrorPopupAtom({
+        type: "error",
+        message: e.response.data.message || e.response.data.error,
+      });
+      seterrorPopupVisible(true);
     }
   }
 

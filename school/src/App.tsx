@@ -8,7 +8,6 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import Students from "./pages/Students/Students";
 import Teachers from "./pages/Teachers/Teachers";
 import Classes from "./pages/Classes/Classes";
-import Attedndance from "./pages/Attendance/Attendance";
 import Login from "./pages/Login/Login";
 import LoadingPage from "./pages/LoadingPage/LoadingPage";
 
@@ -33,8 +32,9 @@ import {
   trigerAtom,
   teacherEditAtom,
   studentEditAtom,
+  errorPopupAtom,
 } from "./utils/atom";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 
 // api calls
@@ -48,7 +48,7 @@ function App() {
   const addteacher = useAtomValue(addteacherAtom);
   const addclass = useAtomValue(addclassAtom);
   const isLogin = useAtomValue(loginAtom);
-  const errorPopup = useAtomValue(errorPopupVisible);
+  const [errorPopup, seterrorPopup] = useAtom(errorPopupVisible);
   const setClassData = useSetAtom(ClaasesDataAtom);
   const setTeachersData = useSetAtom(TeachersDataAtom);
   const setStudentsData = useSetAtom(StudentsDataAtom);
@@ -56,15 +56,22 @@ function App() {
   const [loading, setLoading] = useState(true);
   const teacherEdit = useAtomValue(teacherEditAtom);
   const studentEdit = useAtomValue(studentEditAtom);
+  const SetError = useSetAtom(errorPopupAtom);
 
   async function GetData() {
     const res2 = await GetTeachersData();
     if (typeof res2 !== "string") {
       setTeachersData(res2);
+    } else {
+      SetError({ type: "error", message: res2 });
+      seterrorPopup(true);
     }
     const res3 = await GetStudentsData();
     if (typeof res3 !== "string") {
       setStudentsData(res3);
+    } else {
+      SetError({ type: "error", message: res3 });
+      seterrorPopup(true);
     }
   }
 
@@ -72,12 +79,23 @@ function App() {
     const res = await GetClassesData();
     if (typeof res !== "string") {
       setClassData(res);
+    } else {
+      // console.log(res);
+      seterrorPopup(true);
+      SetError({ type: "error", message: res || "kuch galat hai " });
+    }
+  }
+
+  function goFullscreen() {
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
     }
   }
 
   useEffect(() => {
     if (isLogin) {
       if (trigerCount === 0) {
+        goFullscreen();
         setLoading(true);
 
         Promise.all([GetData(), getClasses()])
@@ -107,6 +125,7 @@ function App() {
 
   return (
     <>
+      {errorPopup && <ErrorPopup />}
       {!isLogin ? (
         <Login />
       ) : (
@@ -121,12 +140,10 @@ function App() {
                 <Route path="/students" element={<Students />} />
                 <Route path="/teachers" element={<Teachers />} />
                 <Route path="/classes" element={<Classes />} />
-                <Route path="/attend" element={<Attedndance />} />
               </Routes>
               {addstudent && <AddStudentModal />}
               {addteacher && <AddTeacherModal />}
               {addclass && <AddClassModal />}
-              {errorPopup && <ErrorPopup />}
               {teacherEdit && <EditTeacherModal />}
               {studentEdit && <EditStudentModal />}
             </main>

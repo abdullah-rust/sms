@@ -36,31 +36,14 @@ CREATE TABLE teachers (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
+
 CREATE TABLE teacher_classes (
-  teacher_id INT REFERENCES teachers(employee_id),
-  class_id INT REFERENCES classes(id),
-  PRIMARY KEY (teacher_id, class_id)
+    teacher_id INT REFERENCES teachers(employee_id) ON DELETE CASCADE,
+    class_id INT REFERENCES classes(id) ON DELETE CASCADE,
+    PRIMARY KEY (teacher_id, class_id)
 );
 
 
-
-CREATE TABLE attendance (
-    id SERIAL PRIMARY KEY,
-    student_id INT REFERENCES students(id),
-    date DATE NOT NULL,
-    status VARCHAR(20) NOT NULL, 
-    UNIQUE (student_id, date)
-);
-
-
-CREATE TABLE grades (
-    id SERIAL PRIMARY KEY,
-    student_id INT REFERENCES students(id), 
-    subject VARCHAR(100) NOT NULL,
-    exam_name VARCHAR(100) NOT NULL,
-    marks INT NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
-);
 
 
 INSERT INTO admin(name,password)

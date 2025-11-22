@@ -1,15 +1,9 @@
-import {
-  FaUsers,
-  FaTrash,
-  // FaChalkboardTeacher,
-  FaUserGraduate,
-} from "react-icons/fa";
+import { FaUsers, FaTrash, FaUserGraduate } from "react-icons/fa";
 import styles from "./ClassCard.module.css";
 import type { ClassItem } from "../../utils/types";
 
 interface ClassCardProps {
   classItem: ClassItem;
-  onEdit: (id: number) => void;
   onDelete: (id: number) => void;
 }
 
@@ -28,13 +22,6 @@ const ClassCard = ({ classItem, onDelete }: ClassCardProps) => {
       </div>
       Class Details
       <div className={styles.cardDetails}>
-        {/* <div className={styles.detailItem}>
-          <FaChalkboardTeacher className={styles.detailIcon} />
-          <span className={styles.detailText}>
-            {classItem.teacher_name || `Teacher ID: ${classItem.teacher_id}`}
-          </span>
-        </div> */}
-
         <div className={styles.detailItem}>
           <FaUserGraduate className={styles.detailIcon} />
           <span className={styles.detailText}>

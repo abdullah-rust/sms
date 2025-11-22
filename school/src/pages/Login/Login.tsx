@@ -5,6 +5,7 @@ import { loginAtom } from "../../utils/atom";
 import { useSetAtom } from "jotai";
 import { FaSpinner } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { errorPopupAtom, errorPopupVisible } from "../../utils/atom";
 
 const Login = () => {
   const [name, setName] = useState("");
@@ -12,6 +13,8 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const setLogInAtom = useSetAtom(loginAtom);
   const navigate = useNavigate();
+  const seterrorPopupAtom = useSetAtom(errorPopupAtom);
+  const seterrorPopupVisible = useSetAtom(errorPopupVisible);
 
   async function handlSubmit(e: any) {
     e.preventDefault();
@@ -25,7 +28,14 @@ const Login = () => {
       setLogInAtom(true);
       navigate("/");
     } catch (e: any) {
-      console.log(e);
+      seterrorPopupAtom({
+        type: "error",
+        message:
+          e.response.data.message ||
+          e.response.data.error ||
+          "Something Went Wrong ",
+      });
+      seterrorPopupVisible(true);
     } finally {
       setIsLoading(false);
     }

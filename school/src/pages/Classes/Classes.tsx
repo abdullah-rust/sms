@@ -5,7 +5,13 @@ import SearchBar from "../../components/SearchBar/SearchBar";
 import styles from "./Classes.module.css";
 import { addclassAtom } from "../../utils/atom";
 import { useSetAtom, useAtom } from "jotai";
-import { ClaasesDataAtom, trigerAtom } from "../../utils/atom";
+import {
+  ClaasesDataAtom,
+  trigerAtom,
+  errorPopupAtom,
+  errorPopupVisible,
+} from "../../utils/atom";
+import { api } from "../../utils/api";
 
 const Classes = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -13,6 +19,8 @@ const Classes = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const setaddclass = useSetAtom(addclassAtom);
   const setRefresAtom = useSetAtom(trigerAtom);
+  const seterrorPopupAtom = useSetAtom(errorPopupAtom);
+  const seterrorPopupVisible = useSetAtom(errorPopupVisible);
 
   const filteredClasses = classes?.filter(
     (classItem) =>
@@ -20,17 +28,33 @@ const Classes = () => {
       classItem.section.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDelete = (id: number) => {
-    setClasses(classes?.filter((classItem) => classItem.class_id !== id));
-  };
+  const handleDelete = async (id: number) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this Class?"
+    );
+    if (!confirmed) return;
+    try {
+      const res = await api.post("/delete-class", {
+        class_id: id,
+      });
+      setClasses(classes?.filter((classItem) => classItem.class_id !== id));
 
-  const handleEdit = (id: number) => {
-    console.log("Edit class:", id);
+      seterrorPopupAtom({
+        type: "success",
+        message: res.data.message || "deleted",
+      });
+      seterrorPopupVisible(true);
+    } catch (e: any) {
+      seterrorPopupAtom({
+        type: "error",
+        message: e.response.data.message || e.response.data.error,
+      });
+      seterrorPopupVisible(true);
+    }
   };
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    // Yahan aap API call kar sakte hain ya data refresh kar sakte hain
     try {
       setRefresAtom((prev) => prev + 1);
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -83,7 +107,6 @@ const Classes = () => {
             <ClassCard
               key={classItem.class_id}
               classItem={classItem}
-              onEdit={handleEdit}
               onDelete={handleDelete}
             />
           ))}

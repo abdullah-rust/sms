@@ -47,7 +47,7 @@ export default async function editStudent(req: Request, res: Response) {
 
     // Check if new class exists
     const classCheck = await client.query(
-      "SELECT id FROM classes WHERE id = $1",
+      "SELECT id, class_name, section FROM classes WHERE id = $1",
       [class_id]
     );
     if (classCheck.rowCount === 0) {
@@ -56,6 +56,7 @@ export default async function editStudent(req: Request, res: Response) {
         .status(404)
         .json({ message: `Class with ID ${class_id} not found` });
     }
+    const classData = classCheck.rows[0];
 
     // Update student
     const updateResult = await client.query(
@@ -65,12 +66,10 @@ export default async function editStudent(req: Request, res: Response) {
 
     // Adjust student_count only if class actually changed
     if (class_id !== old_class_id) {
-      // Increment new class
       await client.query(
         "UPDATE classes SET student_count = student_count + 1 WHERE id = $1",
         [class_id]
       );
-      // Decrement old class
       await client.query(
         "UPDATE classes SET student_count = student_count - 1 WHERE id = $1 AND student_count > 0",
         [old_class_id]
@@ -79,9 +78,17 @@ export default async function editStudent(req: Request, res: Response) {
 
     await client.query("COMMIT"); // Commit transaction
 
+    // Return updated student with class info (same style as AddStudent)
     return res.status(200).json({
       message: "Student update successful",
-      data: updateResult.rows[0],
+      data: {
+        roll_number: updateResult.rows[0].roll_number,
+        name: updateResult.rows[0].name,
+        contact: updateResult.rows[0].contact,
+        dob: updateResult.rows[0].dob,
+        class_id: classData.id,
+        classname: `${classData.class_name} - ${classData.section}`,
+      },
     });
   } catch (error) {
     await client.query("ROLLBACK");

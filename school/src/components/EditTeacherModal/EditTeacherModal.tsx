@@ -3,16 +3,20 @@ import {
   teacherEditAtom,
   ClaasesDataAtom,
   TeacherEditData,
+  TeachersDataAtom,
 } from "../../utils/atom";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom, useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import type { ClassInfo } from "../../utils/types";
 import { FaTimes } from "react-icons/fa";
+import { api } from "../../utils/api";
+import { errorPopupAtom, errorPopupVisible } from "../../utils/atom";
 
 const EditTeacherModal = () => {
-  const setEditTEacher = useSetAtom(teacherEditAtom);
+  const setEditTeacher = useSetAtom(teacherEditAtom);
   const classData = useAtomValue(ClaasesDataAtom || []);
   const teacherEditData = useAtomValue(TeacherEditData);
+  const [TeachersData, setTeachersData] = useAtom(TeachersDataAtom);
 
   // form data
   const [name, setName] = useState("");
@@ -20,6 +24,12 @@ const EditTeacherModal = () => {
   const [contact, setContact] = useState("");
   const [currentClasses, setCurrentClasses] = useState<ClassInfo[]>([]);
   const [newClass, setNewClass] = useState("");
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const seterrorPopupAtom = useSetAtom(errorPopupAtom);
+  const seterrorPopupVisible = useSetAtom(errorPopupVisible);
 
   useEffect(() => {
     setName(teacherEditData?.teacher_name || "");
@@ -47,6 +57,61 @@ const EditTeacherModal = () => {
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (!teacherEditData?.employee_id) {
+      setError("Teacher data missing");
+      return;
+    }
+
+    if (!name || !subject || !contact) {
+      setError("Please fill all fields");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await api.post("/edit-teacher", {
+        employee_id: teacherEditData.employee_id,
+        name,
+        subject,
+        contact,
+        classes: currentClasses.map((c) => c.class_id),
+      });
+      console.log(res.data.data);
+
+      // Update TeachersData atom
+      if (TeachersData) {
+        const updatedTeachers = TeachersData.map((t) =>
+          t.employee_id === teacherEditData.employee_id ? res.data.data : t
+        );
+        setTeachersData(updatedTeachers);
+      }
+      seterrorPopupAtom({
+        type: "success",
+        message: res.data.message || "upadted",
+      });
+      seterrorPopupVisible(true);
+
+      setSuccess("Teacher updated successfully");
+      setEditTeacher(false);
+    } catch (e: any) {
+      setError(e.response?.data?.message || "Something went wrong");
+      console.error(e);
+      seterrorPopupAtom({
+        type: "error",
+        message: e.response.data.message || e.response.data.error,
+      });
+      seterrorPopupVisible(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modal}>
@@ -58,14 +123,17 @@ const EditTeacherModal = () => {
           </div>
           <button
             className={styles.closeButton}
-            onClick={() => setEditTEacher(false)}
+            onClick={() => setEditTeacher(false)}
           >
             ×
           </button>
         </div>
 
         {/* Modal Body */}
-        <form className={styles.form}>
+        <form className={styles.form} onSubmit={handleSubmit}>
+          {error && <p className={styles.error}>{error}</p>}
+          {success && <p className={styles.success}>{success}</p>}
+
           {/* Name */}
           <div className={styles.formGroup}>
             <label className={styles.label}>Full Name</label>
@@ -181,12 +249,17 @@ const EditTeacherModal = () => {
             <button
               type="button"
               className={styles.cancelButton}
-              onClick={() => setEditTEacher(false)}
+              onClick={() => setEditTeacher(false)}
+              disabled={loading}
             >
               Cancel
             </button>
-            <button type="submit" className={styles.submitButton}>
-              Update Teacher
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={loading}
+            >
+              {loading ? "Updating..." : "Update Teacher"}
             </button>
           </div>
         </form>

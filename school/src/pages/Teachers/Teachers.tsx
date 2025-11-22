@@ -3,13 +3,21 @@ import { FaPlus, FaSearch } from "react-icons/fa";
 import TeacherCard from "../../components/TeacherCard/TeacherCard";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import styles from "./Teachers.module.css";
-import { addteacherAtom, TeachersDataAtom } from "../../utils/atom";
+import {
+  addteacherAtom,
+  TeachersDataAtom,
+  errorPopupAtom,
+  errorPopupVisible,
+} from "../../utils/atom";
 import { useAtom, useSetAtom } from "jotai";
+import { api } from "../../utils/api";
 
 const Teachers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [teachers, setTeachers] = useAtom(TeachersDataAtom || []);
   const setaddteacher = useSetAtom(addteacherAtom);
+  const seterrorPopupAtom = useSetAtom(errorPopupAtom);
+  const seterrorPopupVisible = useSetAtom(errorPopupVisible);
   const filteredTeachers = teachers?.filter(
     (teacher) =>
       teacher.teacher_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -21,14 +29,30 @@ const Teachers = () => {
       )
   );
 
-  const handleDelete = (employee_id: number) => {
-    setTeachers(
-      teachers?.filter((teacher) => teacher.employee_id !== employee_id)
+  const handleDelete = async (employee_id: number) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this Teacher?"
     );
-  };
-
-  const handleEdit = (employee_id: number) => {
-    console.log("Edit teacher:", employee_id);
+    if (!confirmed) return;
+    try {
+      const res = await api.post("/delete-teacher", {
+        employee_id,
+      });
+      setTeachers(
+        teachers?.filter((teacher) => teacher.employee_id !== employee_id)
+      );
+      seterrorPopupAtom({
+        type: "success",
+        message: res.data.message || "deleted",
+      });
+      seterrorPopupVisible(true);
+    } catch (e: any) {
+      seterrorPopupAtom({
+        type: "error",
+        message: e.response.data.message || e.response.data.error,
+      });
+      seterrorPopupVisible(true);
+    }
   };
 
   return (
@@ -46,11 +70,13 @@ const Teachers = () => {
       </div>
 
       {/* Search Bar */}
-      <SearchBar
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        placHolder="Search by teachers name"
-      />
+      <div className={styles.searchContainer}>
+        <SearchBar
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          placHolder="Search by teachers name"
+        />
+      </div>
 
       {/* Teachers Grid */}
       <div className={styles.teachersGrid}>
@@ -59,7 +85,6 @@ const Teachers = () => {
             <TeacherCard
               key={teacher.employee_id}
               teacher={teacher}
-              onEdit={handleEdit}
               onDelete={handleDelete}
             />
           ))}

@@ -37,6 +37,6 @@ export interface Student {
   name: string;
   class_id: number;
   contact: string;
-  dob: string; // Date as string
-  classname?: string; // Optional: class name for display
+  dob: string;
+  classname?: string;
 }

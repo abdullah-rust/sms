@@ -12,8 +12,7 @@ import { useSetAtom } from "jotai";
 
 interface StudentCardProps {
   student: Student;
-  onEdit: (roll_number: number) => void;
-  onDelete: (roll_number: number) => void;
+  onDelete: (roll_number: number, class_id: number) => void;
 }
 
 const StudentCard = ({ student, onDelete }: StudentCardProps) => {
@@ -99,7 +98,7 @@ const StudentCard = ({ student, onDelete }: StudentCardProps) => {
         </button>
         <button
           className={styles.deleteButton}
-          onClick={() => onDelete(student.roll_number)}
+          onClick={() => onDelete(student.roll_number, student.class_id)}
         >
           <FaTrash className={styles.actionIcon} />
           Delete

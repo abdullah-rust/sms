@@ -3,7 +3,6 @@ import {
   FaUserGraduate,
   FaChalkboardTeacher,
   FaUsers,
-  FaClipboardList,
 } from "react-icons/fa";
 import styles from "./Header.module.css";
 import { useNavigate } from "react-router-dom";
@@ -48,13 +47,6 @@ const Header = () => {
         >
           <FaUsers className={styles.icon} />
           <span>Classes</span>
-        </button>
-        <button
-          className={styles.navButton}
-          onClick={() => handleNavigation("attendance")}
-        >
-          <FaClipboardList className={styles.icon} />
-          <span>Attendance</span>
         </button>
       </nav>
     </header>

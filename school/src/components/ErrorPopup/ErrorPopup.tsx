@@ -8,6 +8,7 @@ import {
 import styles from "./ErrorPopup.module.css";
 import { errorPopupAtom, errorPopupVisible } from "../../utils/atom";
 import { useAtom, useSetAtom } from "jotai";
+import { useEffect } from "react";
 
 const ErrorPopup = () => {
   const [errorValue, _] = useAtom(errorPopupAtom);
@@ -16,8 +17,16 @@ const ErrorPopup = () => {
   const onClose = () => {
     setErrorPopupVisible(false);
   };
+  useEffect(() => {
+    if (!errorValue) return;
 
-  // Agar errorValue null hai toh kuch render na kare
+    const timer = setTimeout(() => {
+      setErrorPopupVisible(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [errorValue]);
+
   if (!errorValue) return null;
 
   const getIcon = () => {

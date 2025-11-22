@@ -5,6 +5,7 @@ import type React from "react";
 import { api } from "../../utils/api";
 import { useState } from "react";
 import { FaSpinner } from "react-icons/fa";
+import { errorPopupAtom, errorPopupVisible } from "../../utils/atom";
 
 const AddClassModal = () => {
   const setaddclass = useSetAtom(addclassAtom);
@@ -12,6 +13,8 @@ const AddClassModal = () => {
   const [class_name, setClassName] = useState("");
   const [section, setSection] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const seterrorPopupAtom = useSetAtom(errorPopupAtom);
+  const seterrorPopupVisible = useSetAtom(errorPopupVisible);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -24,9 +27,19 @@ const AddClassModal = () => {
       });
       console.log(res.data.data);
       setClassData((prev) => [...(prev || []), res.data.data]);
-      setaddclass(false); // Success hone pe modal close karo
+      seterrorPopupAtom({
+        type: "success",
+        message: res.data.message || "created",
+      });
+      seterrorPopupVisible(true);
+      setaddclass(false);
     } catch (e: any) {
       console.log(e);
+      seterrorPopupAtom({
+        type: "error",
+        message: e.response.data.message || e.response.data.error,
+      });
+      seterrorPopupVisible(true);
     } finally {
       setIsLoading(false);
     }

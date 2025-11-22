@@ -5,12 +5,19 @@ import SearchBar from "../../components/SearchBar/SearchBar";
 import styles from "./Students.module.css";
 import { addstudentAtom } from "../../utils/atom";
 import { useAtom, useSetAtom } from "jotai";
-import { StudentsDataAtom } from "../../utils/atom";
+import {
+  StudentsDataAtom,
+  errorPopupAtom,
+  errorPopupVisible,
+} from "../../utils/atom";
+import { api } from "../../utils/api";
 
 const Students = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [students, setStudents] = useAtom(StudentsDataAtom || []);
   const setAddstudent = useSetAtom(addstudentAtom);
+  const seterrorPopupAtom = useSetAtom(errorPopupAtom);
+  const seterrorPopupVisible = useSetAtom(errorPopupVisible);
 
   const filteredStudents = students?.filter(
     (student) =>
@@ -19,20 +26,36 @@ const Students = () => {
       student.roll_number.toString().includes(searchTerm)
   );
 
-  const handleDelete = (roll_number: number) => {
-    setStudents(
-      students?.filter((student) => student.roll_number !== roll_number)
+  const handleDelete = async (roll_number: number, class_id: number) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this student?"
     );
-  };
-
-  const handleEdit = (roll_number: number) => {
-    console.log("Edit student:", roll_number);
-    // Edit logic here
+    if (!confirmed) return;
+    try {
+      const res = await api.post("/delete-student", {
+        roll_number,
+        class_id,
+      });
+      setStudents(
+        students?.filter((student) => student.roll_number !== roll_number)
+      );
+      seterrorPopupAtom({
+        type: "success",
+        message: res.data.message || "deleted",
+      });
+      seterrorPopupVisible(true);
+    } catch (e: any) {
+      seterrorPopupAtom({
+        type: "error",
+        message: e.response.data.message || e.response.data.error,
+      });
+      seterrorPopupVisible(true);
+    }
   };
 
   return (
     <div className={styles.studentsPage}>
-      {/* Header Section */}
+      {/* Header Section - Fixed */}
       <div className={styles.header}>
         <h1 className={styles.title}>Students Management</h1>
         <button
@@ -44,21 +67,22 @@ const Students = () => {
         </button>
       </div>
 
-      {/* Search Bar */}
-      <SearchBar
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        placHolder="Search by student id.."
-      />
+      {/* Search Bar - Fixed */}
+      <div className={styles.searchContainer}>
+        <SearchBar
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          placHolder="Search by student id.."
+        />
+      </div>
 
-      {/* Students Grid */}
+      {/* Students Grid - Scrollable Content */}
       <div className={styles.studentsGrid}>
         {filteredStudents &&
           filteredStudents.map((student) => (
             <StudentCard
               key={student.roll_number}
               student={student}
-              onEdit={handleEdit}
               onDelete={handleDelete}
             />
           ))}

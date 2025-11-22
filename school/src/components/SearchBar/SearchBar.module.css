@@ -1,5 +1,6 @@
 .searchContainer {
-  margin-bottom: 2rem;
+  /* Yeh class ab Students.module.css mein handle ho rahi hai */
+  margin-bottom: 0; /* Remove karo kyunki fixed position hai */
 }
 
 .searchBox {
@@ -23,7 +24,7 @@
   border: 2px solid #e9ecef;
   border-radius: 12px;
   font-size: 1rem;
-  background: white;
+  background: rgb(53, 53, 53);
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
@@ -37,17 +38,4 @@
 
 .searchInput::placeholder {
   color: #8a8a8a;
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .searchInput {
-    background: #2d2d2d;
-    border-color: #404040;
-    color: white;
-  }
-
-  .searchInput:focus {
-    border-color: #667eea;
-  }
 }

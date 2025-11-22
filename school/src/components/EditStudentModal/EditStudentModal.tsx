@@ -9,6 +9,7 @@ import {
 } from "../../utils/atom";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { api } from "../../utils/api";
+import { errorPopupAtom, errorPopupVisible } from "../../utils/atom";
 
 const EditStudentModal: React.FC = () => {
   const [name, setName] = useState("");
@@ -22,6 +23,8 @@ const EditStudentModal: React.FC = () => {
   const setStudentAtom = useSetAtom(studentEditAtom);
   const StudentData = useAtomValue(StudentEditData);
   const [StudentsData, setStudentsData] = useAtom(StudentsDataAtom);
+  const seterrorPopupAtom = useSetAtom(errorPopupAtom);
+  const seterrorPopupVisible = useSetAtom(errorPopupVisible);
 
   useEffect(() => {
     if (StudentData) {
@@ -68,10 +71,21 @@ const EditStudentModal: React.FC = () => {
       }
 
       setSuccess("Student updated successfully");
-      console.log(res.data.data);
+
+      seterrorPopupAtom({
+        type: "error",
+        message: res.data.message || "upadted",
+      });
+      seterrorPopupVisible(true);
+      setStudentAtom(false);
     } catch (e: any) {
       setError(e.response?.data?.message || "Something went wrong");
       console.error(e);
+      seterrorPopupAtom({
+        type: "success",
+        message: e.response.data.message || e.response.data.error,
+      });
+      seterrorPopupVisible(true);
     } finally {
       setLoading(false);
     }
