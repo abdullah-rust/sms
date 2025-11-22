@@ -9,7 +9,7 @@ A complete school management platform designed to handle the core operations of 
 ## ✨ Features
 
 - 🎓 **Student Management** - Complete CRUD operations for students
-- 👨‍🏫 **Teacher Management** - Manage teachers and their assignments
+- 👨‍🏫 **Teacher Management** - Manage teachers and their students
 - 📚 **Class Management** - Organize classes and sections
 - 📊 **Dashboard Analytics** - Visual insights with charts and metrics
 - 🔐 **Secure Authentication** - JWT-based admin authentication
@@ -135,3 +135,10 @@ http://localhost
 ```
 
 Your School Management System should now be running properly.
+
+**If you have followed the setup correctly, you can log in using the default credentials**
+
+```bash
+Username: admin
+Password: 226622
+```
